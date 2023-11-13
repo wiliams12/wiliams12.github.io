@@ -1,0 +1,22 @@
+@import './index.css';
+
+article {
+    display: block;
+    text-align: center;
+    width: 100%;
+}
+article h2, article p {
+    width: 100%;
+}
+
+article p {
+    font-size: 1.3rem;
+}
+
+article h2 {
+    font-size: 2rem;
+}
+
+aside h3 {
+    font-size: 1.5rem;
+}

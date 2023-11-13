@@ -1,0 +1,181 @@
+@import url('https://fonts.googleapis.com/css2?family=Patrick+Hand&family=Playpen+Sans&family=Poppins:wght@400;700&display=swap');
+
+:root {
+    --grid-size: 86vh;
+    --orange: #EC8F5E;
+    --light-orange:#F3B664;
+    --yellow: #F1EB90;
+    --green: #9FBB73;
+}
+
+@media (max-width: 1200px) {
+    :root {
+        --grid-size: 80vh;
+    }
+    article {
+        flex-direction: column;
+    }
+    div#buttons {
+        flex-direction: row;
+        width: var(--grid-size);
+        margin: calc(var(--grid-size) / 50) 0;
+        flex-wrap: wrap;
+        justify-content: flex-end;
+    }
+    div#buttons > button {
+        margin: calc(var(--grid-size) / 100);
+    }
+}
+@media (max-width: 950px) {
+    main {
+        flex-direction: column;
+    }
+    aside.aside {
+        width: 100%;
+    
+    }
+}
+@media (max-width: 650px) {
+    :root {
+        --grid-size: 92vw;
+    }
+
+}
+
+html {
+    font-family: 'Patrick Hand'
+}
+
+body {
+    margin: 0;
+}
+
+#grid {
+    background-color: var(--yellow);
+    height: var(--grid-size);
+    width: var(--grid-size);
+    display: flex;
+    flex-direction: column;
+    border: calc(var(--grid-size) / 150) solid var(--orange);
+    border-radius: calc(var(--grid-size) / 50);
+}
+
+div {
+    width: 100%;
+    height: 100%;
+}
+
+#grid > div {
+    display: flex;
+    align-items: center;
+    height: calc(var(--grid-size) / 9);
+}
+
+#grid > div > div {
+    margin: 0;
+    border-width: calc(var(--grid-size) / 300);
+    border-style: solid;
+    border-color: var(--orange);
+    text-align: center;
+    font-size: calc(var(--grid-size) / 15);
+}
+#grid > div > div:hover {
+    background-color: var(--light-orange);
+}
+
+#grid > div > div:nth-child(3n) {
+    border-right: calc(var(--grid-size) / 180) solid var(--orange);
+}
+#grid > div > div:nth-child(3n - 2) {
+    border-left: calc(var(--grid-size) / 180) solid var(--orange);
+}
+
+#grid > div:nth-child(3n) {
+    border-bottom: calc(var(--grid-size) / 200) solid var(--orange);
+}
+#grid > div:nth-child(3n - 2) {
+    border-top: calc(var(--grid-size) / 200) solid var(--orange);
+}
+
+article, main {
+    display: flex;
+    justify-content: space-between;
+}
+
+article {
+    margin:calc(var(--grid-size) / 100);
+    margin-bottom: calc(var(--grid-size) / 5);
+}
+
+#buttons {
+    display: flex;
+    justify-content: flex-start;
+    flex-direction: column;
+    width: calc(var(--grid-size) / 4);
+}
+
+aside {
+    width: calc(var(--grid-size) / 2);
+    background-color: var(--light-orange);
+    text-align: center;
+    border: 5px solid var(--orange);
+}
+
+aside h2, aside p {
+    margin: 0;
+    padding: calc(var(--grid-size) / 50) calc(var(--grid-size) / 25);
+}
+
+aside h2 {
+    font-size: 2rem;
+}
+
+aside p {
+    font-size: 1.3rem;
+}
+
+aside p a {
+    text-decoration: none;
+    color: white;
+    text-shadow: 0 0 5px black;
+}
+
+#buttons > button {
+    width: calc(var(--grid-size) / 6);
+    height: calc(var(--grid-size) / 15);
+    border-radius: calc(var(--grid-size) / 100);
+    color: var(--yellow);
+    background-color: var(--orange);
+    border: none;
+    margin: auto
+}
+
+footer, header {
+    background-color: var(--green);;
+}
+
+header {
+    display: flex;
+    justify-content: space-between;
+    color: white;
+    text-shadow: 0 0 5px black;
+    padding: 0 calc(var(--grid-size) / 10);
+}
+
+header a {
+    text-decoration: none;
+    color: white;
+    font-size: 1.8rem;  
+    margin: auto;
+}
+
+nav {
+    display: flex;  
+}
+
+footer {
+    color: white;
+    text-align: center;
+    font-size: 1.1rem;
+    padding: calc(var(--grid-size) / 100);
+}
