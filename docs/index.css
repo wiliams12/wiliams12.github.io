@@ -37,7 +37,7 @@
 }
 @media (max-width: 650px) {
     :root {
-        --grid-size: 92vw;
+        --grid-size: 72vw;
     }
 
 }
