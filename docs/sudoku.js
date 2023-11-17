@@ -106,6 +106,7 @@ class Sudoku {
         }
         if (pSets === undefined) {
             pSets = this.makePreemtiveSets(tiles);
+            // pSets = this.shorten(pSets);
         }
         return this.backtrack(tiles, pSets);
     }
@@ -115,7 +116,7 @@ class Sudoku {
             if (!checkForElement(0, tiles)) {
                 return tiles;
             }
-            var newPSets = pSets.map(x=>[ ...x ]);
+            var newPSets = pSets.map(row=>row.map(x=>[ ...x ]));  // This worked before: pSets.map(x=>[ ...x ]);
             var newTiles = tiles.map(x=>[ ...x ]);
             while (true) {
                 let location = this.findSingleton(newPSets);
@@ -134,7 +135,7 @@ class Sudoku {
                         for (let num of newPSets[i][j]) {
                             newTiles[i][j] = num;
                             if (this.check(newTiles)) {
-                                let originalPSets = newPSets.map(x=>[ ...x ]);
+                                let originalPSets = pSets.map(row=>row.map(x=>[ ...x ])); // newPSets.map(x=>[ ...x ]);
                                 this.enterValue(newTiles, newPSets, {'row':i, 'col':j, 'value': num});
                                 let res = this.backtrack(newTiles, newPSets);
                                 if (res.length != 0) {
@@ -156,8 +157,9 @@ class Sudoku {
     }
 
     // value syntax: {row: " ", col: " ", num: " "}
+    // ? Maybe the possibility to somehow modify it in the way, not so many copies are made
     enterValue(tiles,pSets,value) {
-        var newPSets = pSets.map(x=>[ ...x ]);
+        var newPSets = pSets.map(row=>row.map(x=>[ ...x ])); // pSets.map(x=>[ ...x ]);
         var newTiles = tiles.map(x=>[ ...x ]);
         newTiles[value['row']][value['col']] = value['num'];
         this.updatePreemtiveSets(newPSets, newTiles, [value['row'], value['col']]);
@@ -304,104 +306,99 @@ class Sudoku {
         }
     }
     // shotens the preemtive sets
-    // ! doesn't do a shit
-    // ? probably just ignore; it is long and useless
-    /*shorten(pSets) {
-        var newPSets = pSets.map(x=>[ ...x ]);
-        for (let i = 0; i < GRID_SIZE**2; i++) {
-            for (let j = 0; j < GRID_SIZE**2; j++) {
+    shorten(pSets) {
+        var pSetsCopy = pSets.map(row=>row.map(x=>[ ...x ]));
+        // rows ? maybe later add for cols in the same code
+        for (let i = 0; i < 9; i++) {
+            for (let j = 0; j < 9; j++) {
+                let current = pSetsCopy[i][j];
                 let matches = [];
-                let current = pSets[i][j]
-                for (let x = 0; x < GRID_SIZE**2; x++) {
-                    if (x != j) {
-                        if (pSets[i][x].length < current.length) {
-                            let valid = true
-                            for (let num of pSets[i][x]) {
-                                if (!num in current) {
-                                    valid = false;
-                                    break;
-                                }
-                            }
-                            if (valid) {
-                                matches.push(pSets[i][x]);
-                            }
+                for (let q = 0; q < 9; q++) {
+                    if (j == q || pSetsCopy[i][q].length == 0) {
+                        continue;
+                    }
+                    let valid = true;
+                    for (let num of pSetsCopy[i][q]) {
+                        if (!current.includes(num)) {
+                            valid = false;
                         }
+                    }
+                    if (valid) {
+                        matches.push(q);
                     }
                 }
-                if (current.length == matches.length) {
-                        for (let i = 0; i < GRID_SIZE**2; i++) {
-                            for (let j = 0; j < GRID_SIZE**2; j++) {
-                                if (!pSets[i][j] in matches) {
-                                    for (let el of current) {
-                                        removeElement(el, pSets);
-                                    }
-                                }
-                            }
-                        }
-                    }
-                // does the cols
-                matches = [];
-                current = pSets[j][i]
-                for (let x = 0; x < GRID_SIZE**2; x++) {
-                    if (x != j) {
-                        if (pSets[x][i].length < current.length) {
-                            let valid = true
-                            for (let num of pSets[x][i]) {
-                                if (!num in current) {
-                                    valid = false;
-                                    break;
-                                }
-                            }
-                            if (valid) {
-                                matches.push(pSets[x][i]);
-                            }
-                        }
-                    }
-                }
-                if (current.length == matches.length) {
-                    for (let i = 0; i < GRID_SIZE**2; i++) {
-                        for (let j = 0; j < GRID_SIZE**2; j++) {
-                            if (!pSets[j][i] in matches) {
-                                for (let el of current) {
-                                    removeElement(el, pSets);
-                                }
+                if (matches.length == current.length - 1 && current.length > 1) {
+                    for (let q = 0; q < 9; q++) {
+                        // no "!" because It needs those OUTSIDE of matches and current
+                        if (!(q == j || matches.includes(q))) {
+                            for (let num of current) {
+                                removeElement(num, pSetsCopy[i][q]);
                             }
                         }
                     }
                 }
             }
         }
-        // does the boxes
-        for (let x = 0; x < GRID_SIZE; x++) {
-            for (let y = 0; y < GRID_SIZE; y++) {
+        // cols
+        for (let i = 0; i < 9; i++) {
+            for (let j = 0; j < 9; j++) {
+                let current = pSetsCopy[j][i];
                 let matches = [];
-                for (let i = 0; i < GRID_SIZE; i++) {
-                    for (let j = 0; j < GRID_SIZE; j++) {
-                        let current = pSets[x*GRID_SIZE+i][y*GRID_SIZE+j];
-                        for (let n = 0; n < GRID_SIZE; n++) {
-                            for (let m = 0; m < GRID_SIZE; m++) {
-                                if (m != j && n != i) {
-                                    if (pSets[x*GRID_SIZE+n][y*GRID_SIZE+m].length < current.length) {
-                                        let valid = true;
-                                        for (let num of pSets[x*GRID_SIZE+n][y*GRID_SIZE+m]) {
-                                            if (!num in current) {
-                                                valid = false;
-                                                break;
-                                            }
-                                        }
-                                        if (valid) {
-                                            matches.push([x*GRID_SIZE+n][y*GRID_SIZE+m]);
-                                        }
-                                    }
-                                }  
-                            } 
+                for (let q = 0; q < 9; q++) {
+                    if (j == q || pSetsCopy[q][i].length == 0) {
+                        continue;
+                    }
+                    let valid = true;
+                    for (let num of pSetsCopy[q][i]) {
+                        if (!current.includes(num)) {
+                            valid = false;
                         }
-                        if (current.length == matches.length) {
-                            for (let i = 0; i < GRID_SIZE**2; i++) {
-                                for (let j = 0; j < GRID_SIZE**2; j++) {
-                                    if (!pSets[j][i] in matches) {
-                                        for (let el of current) {
-                                            removeElement(el, pSets);
+                    }
+                    if (valid) {
+                        matches.push(q);
+                    }
+                }
+                if (matches.length == current.length - 1 && current.length > 1) {
+                    for (let q = 0; q < 9; q++) {
+                        if (!(q == j || matches.includes(q))) {
+                            for (let num of current) {
+                                removeElement(num, pSetsCopy[q][i]);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        // boxes 
+        for (let i = 0; i < 3; i++) {
+            for (let j = 0; j < 3; j++) {
+                for (let x = 0; x < 3; x++) {
+                    for (let y = 0; y < 3; y++) {
+                        let current = pSetsCopy[i*3+x][j*3+y];
+                        let matches = [];
+                        for (let x2 = 0; x2 < 3; x2++) {
+                            for (let y2 = 0; y2 < 3; y2++) {
+                                if ((x == x2 && y == y2) || pSetsCopy[i*3+x2][j*3+y2].length == 0) {
+                                    continue;
+                                }
+                                let valid = true;
+                                for (let num of pSetsCopy[i*3+x2][y*3+y2]) {
+                                    if (!current.includes(num)) {
+                                        valid = false;
+                                    }
+                                }   
+                                if (valid) {
+                                    matches.push([x2,y2])
+                                }                             
+                            }
+                        }
+                        if (matches.length - 1 == current.length && current.length > 1) {
+                            for (let x2 = 0; x2 < 3; x2++) {
+                                for (let y2 = 0; y2 < 3; y2++) {
+                                    if (!((x2 == x && y2 == y) || matches.map(x=>JSON.stringify(x)).includes(JSON.stringify([x2,y2])))) {
+                                        // ? doesn't change
+                                        for (let num of current) {
+                                            removeElement(num, pSetsCopy[i*3+x2][j*3+y2]);
                                         }
                                     }
                                 }
@@ -411,7 +408,8 @@ class Sudoku {
                 }
             }
         }
-    }*/
+        return pSetsCopy;
+    }
 }
 
 // var sudoku = new Sudoku();

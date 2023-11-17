@@ -51,9 +51,10 @@ for (let i = 0; i < 9; i++) {
 
 let numbers = document.querySelectorAll('.num-button');
 for (let num of numbers) {
-    console.log('test');
+    if (num.id == 0) {
+        num.style['background-color'] = '#F3B664';
+    }
     num.addEventListener('click', function setCurrentlyOn() {
-        console.log('Jebej mě')
         currentlyOn = Number(num.id);
         for (let btn of numbers) {
             btn.style['background-color'] = '#EC8F5E';

@@ -1,9 +1,11 @@
 @import './index.css';
 
 article {
+    box-sizing: border-box;
     display: block;
     text-align: center;
-    width: 100%;
+    width:100%;
+    padding: 0 10%;
 }
 article h2, article p {
     width: 100%;
